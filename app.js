@@ -4,15 +4,13 @@ const cors = require('cors');
 const axios = require('axios');
 require('dotenv').config();
 const mydb = require('./Config/DBconnection');
+const { setupWebSocket } = require('./Routes/webSocket.js');
+const { pollData } = require('./Routes/deviceData');
+const { fetchDeviceData }= require('./Routes/deviceData');
 
 const smaroute=require('./Routes/SMAauth')
-const weatherroute=require('./Routes/weather')
+const  {router: weatherroute }=require('./Routes/weather')
 const userroute=require('./Routes/login')
-
-
-
-
-
 
 const app=express();
 app.use(cors());
@@ -25,10 +23,7 @@ app.use(bodyparser.urlencoded({extended:true}))
 
 
 
-
-
-
-
+//server
 const server = http.createServer((req, res) => {
   res.writeHead(200, { 'Content-Type': 'text/plain' });
   res.end('Hello, world!');
@@ -44,7 +39,18 @@ app.post('/lol', (req, res) => {
       res.send("heyyyy");
 })
 
+//routes 
+app.use('/loginTest', userroute)
 
+app.use('/weather',weatherroute )
+
+app.use('/sma',smaroute);
+
+//setupWebSocket();
+pollData();
+//fetchDeviceData();
+
+//login
 app.post('/login', (req, res) => {
     const { username, password } = req.body;
     res.send("heyyyy");
@@ -73,11 +79,7 @@ app.post('/api/data',(req,res)=>{
     message: "hello!! "+n,
   })
 })
-app.use('/loginTest', userroute)
 
-app.use('/weather',weatherroute )
-
-app.use('/sma',smaroute);
 
 
 app.get('/totalEnergy', (req, res) => {
@@ -115,3 +117,4 @@ app.get('/totalEnergy', (req, res) => {
 var listener = app.listen(3000, function(){
     console.log('Server running on port ' + listener.address().port); //Listening on port 8888
 });
+

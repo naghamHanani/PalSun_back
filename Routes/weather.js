@@ -25,4 +25,23 @@ router.get('/', async (req, res) => {
       res.status(500).json({ error: error.response?.data || error.message });
   }
 });
-module.exports=router
+
+
+async function fetchWeatherData(location) {
+    try {
+      const response = await axios.get(`https://api.weatherapi.com/v1/current.json`, {
+        params: { key: WEATHER_KEY, q: location },
+      });
+     
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching weather data:', error);
+      return null;
+    }
+}
+
+
+module.exports={
+    router,
+    fetchWeatherData
+}
