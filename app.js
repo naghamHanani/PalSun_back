@@ -4,8 +4,10 @@ const cors = require('cors');
 const axios = require('axios');
 require('dotenv').config();
 const mydb = require('./Config/DBconnection');
-const { setupWebSocket } = require('./Routes/webSocket.js');
-const { pollData } = require('./Routes/deviceData');
+
+const { setupWebSocket} = require('./Routes/socketServer');
+
+const { pollData, setSocketInstance  } = require('./Routes/deviceData');
 const { fetchDeviceData }= require('./Routes/deviceData');
 
 const smaroute=require('./Routes/SMAauth')
@@ -24,10 +26,21 @@ app.use(bodyparser.urlencoded({extended:true}))
 
 
 //server
-const server = http.createServer((req, res) => {
-  res.writeHead(200, { 'Content-Type': 'text/plain' });
-  res.end('Hello, world!');
+
+const server = http.createServer(app); // Use the same server as your Express app
+const io = setupWebSocket(server);
+setSocketInstance(io);
+server.listen(3000, () => {
+  console.log('Server running on port 3000');
+  //console.log("WebSocket server is ready and listening on port", server.address().port);
 });
+
+// const server = http.createServer((req, res) => {
+//   res.writeHead(200, { 'Content-Type': 'text/plain' });
+//   res.end('Hello, world!');
+// });
+// const io = setupWebSocket(server);
+
 
 
 app.get('/',(req,res,next)=>{
@@ -46,8 +59,9 @@ app.use('/weather',weatherroute )
 
 app.use('/sma',smaroute);
 
-//setupWebSocket();
-pollData();
+
+//pollData();
+
 //fetchDeviceData();
 
 //login
@@ -114,7 +128,21 @@ app.get('/totalEnergy', (req, res) => {
   });
 });
 
-var listener = app.listen(3000, function(){
-    console.log('Server running on port ' + listener.address().port); //Listening on port 8888
+app.post('/test-notification', (req, res) => {
+  const { deviceId, errors } = req.body;
+
+  if (io) {
+      io.emit('errorDetected', {
+          deviceId,
+          errors,
+      });
+      res.status(200).json({ success: true, message: 'Notification sent!' });
+  } else {
+      res.status(500).json({ success: false, message: 'WebSocket not initialized' });
+  }
 });
+
+// var listener = app.listen(3000, function(){
+//     console.log('Server running on port ' + listener.address().port); //Listening on port 8888
+// });
 

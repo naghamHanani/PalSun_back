@@ -2,6 +2,17 @@
 const mydb = require('../Config/DBconnection'); // Database connection
 const { fetchWeatherData } = require('./weather'); // Weather API handler
 const { predictError } = require('./erorrDetect'); // Error prediction logic
+const { populateDataForDevices } = require('./populateDeviceData')
+
+const { setupWebSocket } = require('./socketServer');
+let io;
+
+function setSocketInstance(socketInstance) {
+    io = socketInstance;
+}
+
+//store random data in the table 
+//populateDataForDevices()
 
 //  fetch device data from MySQL
 async function fetchDeviceData() {
@@ -12,7 +23,7 @@ async function fetchDeviceData() {
         return reject(error); // Handle query errors
       }
       resolve(results); // Return the results as an array of rows
-      console.log(results)
+     // console.log(results)
     });
   });
 }
@@ -23,24 +34,41 @@ async function pollData() {
     try {
       const deviceData = await fetchDeviceData(); // Fetch device data from MySQL
       
-      console.log(deviceData)
+      //console.log(deviceData)
 
        for (const device of deviceData) {
         const city = device.timezone.split('/')[1]; // get the city from timezone
 
-        const weatherData = await fetchWeatherData(city); // Fetch weather data for the device's location
-         console.log("weather at"+device.timezone+"="+weatherData)
-         const prediction = predictError(device, weatherData); // Predict device error based on data
-        console.log(`Device ${device.deviceId}:`, prediction); // Log the prediction
-       }
+        const weatherData = await fetchWeatherData(city).catch(err => {
+          console.error(`Failed to fetch weather data for ${city}:`, err);
+          return null;
+      });
+      
+      if (!weatherData) continue;
+
+        // console.log("weather at"+device.timezone+"="+weatherData)
+
+         const prediction = await predictError(device, weatherData); // Predict device error based on data
+
+         if (Array.isArray(prediction) && prediction.length > 0) {
+          console.log(`Device ${device.deviceId}:`, prediction); // Log the prediction
+        if (io) {
+          io.emit('errorDetected', {
+              deviceId: device.deviceId,
+              errors: prediction,
+          });
+      }
+        
+       }}
     } catch (error) {
       console.error('Error during polling:', error); // Handle errors during polling
     }
-  },1000 ); // Poll every 5 minutes = 300000
+  },10000 ); // Poll every 5 minutes = 300000
 }
 
 // Export the functions for reuse in other parts of the application
 module.exports = {
   fetchDeviceData,
   pollData,
+  setSocketInstance
 };
