@@ -29,7 +29,9 @@ app.use(bodyparser.urlencoded({extended:true}))
 
 const server = http.createServer(app); // Use the same server as your Express app
 const io = setupWebSocket(server);
+
 setSocketInstance(io);
+
 server.listen(3000, () => {
   console.log('Server running on port 3000');
   //console.log("WebSocket server is ready and listening on port", server.address().port);
@@ -60,7 +62,7 @@ app.use('/weather',weatherroute )
 app.use('/sma',smaroute);
 
 
-//pollData();
+pollData();
 
 //fetchDeviceData();
 

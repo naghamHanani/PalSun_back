@@ -6,8 +6,8 @@ async function predictError(device, weather) {
 
     const { threshold } = await getDynamicThreshold(device.deviceId, weather, 7);
     
-    console.log("Device data inside predictError:", device);
-  console.log("Weather data inside predictError:", weather);
+   // console.log("Device data inside predictError:", device);
+  //console.log("Weather data inside predictError:", weather);
   
     // Overheating
     if (weather.temperature > 35 && device.status !== 'normal') {
@@ -23,7 +23,10 @@ async function predictError(device, weather) {
     if (device.communicationProtocol !== 'expectedProtocol' && device.isResetted === 1) {
       errors.push('Frequent communication resets');
     }
-  
+   
+    //console.log("Errors:", errors);
+
+    
     return errors.length ? errors : 'Device is operating normally';
 }
 

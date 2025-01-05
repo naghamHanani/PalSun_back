@@ -3,16 +3,16 @@ const { Server } = require('socket.io');
 function setupWebSocket(server) {
     const io = new Server(server, {
         cors: {
-            origin: '*', // Replace '*' with specific origins in production
+            origin: "http://localhost:3001", // Replace '*' with specific origins in production
         },
     });
 
     
 
     io.on('connection', (socket) => {
-        console.log(`WebSocket client attempting to connect: ${socket.id}`);
+        console.log(`Socket client attempting to connect: ${socket.id}`);
         
-        socket.emit('welcome', 'Hello, client!');
+      // socket.emit('welcome', 'Hello, client!');
 
         // setInterval(() => {
         //     io.emit('message', 'This is a broadcast message from the server!');
@@ -24,17 +24,19 @@ function setupWebSocket(server) {
             // Send a response back to the client
             socket.emit('message', `Server received: ${message}`);
         });
-
+        socket.on('reconnect', () => {
+            console.log(`Client reconnected: ${socket.id}`);
+        });
         socket.on('disconnect', () => {
             console.log(`WebSocket client disconnected: ${socket.id}`);
         });
     
         socket.on('error', (err) => {
-            console.error(`WebSocket error for client ${socket.id}:`, err);
+            console.error(`Socket error for client ${socket.id}:`, err);
         });
     });
 
-    console.log("WebSocket server is ready and listening ");
+    console.log("Socket server is ready and listening ");
     return io;
 }
 

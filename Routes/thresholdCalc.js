@@ -49,7 +49,7 @@ function calculateThreshold(weather, meanPower) {
 async function getDynamicThreshold(deviceId, weatherData, days) {
     const { mean } = await analyzeHistoricalData(deviceId, days);
     const adjustedThreshold = calculateThreshold(weatherData, mean);
-    console.log("threshhold value for the device is "+adjustedThreshold)
+    //console.log("threshhold value for the device is "+adjustedThreshold)
     return adjustedThreshold;
 }
 

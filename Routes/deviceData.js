@@ -9,6 +9,11 @@ let io;
 
 function setSocketInstance(socketInstance) {
     io = socketInstance;
+    console.log('WebSocket instance set.');
+    if (io) {
+        io.emit('serverReady', 'WebSocket server is ready');
+    }
+
 }
 
 //store random data in the table 
@@ -32,6 +37,7 @@ async function fetchDeviceData() {
 async function pollData() {
   setInterval(async () => {
     try {
+      console.log('Polling data...');
       const deviceData = await fetchDeviceData(); // Fetch device data from MySQL
       
       //console.log(deviceData)
@@ -50,16 +56,23 @@ async function pollData() {
 
          const prediction = await predictError(device, weatherData); // Predict device error based on data
 
-         if (Array.isArray(prediction) && prediction.length > 0) {
+         //console.log(`Prediction for Device ${device.deviceId}:`, prediction);
+
+         if ( prediction.length > 0) {
           console.log(`Device ${device.deviceId}:`, prediction); // Log the prediction
-        if (io) {
-          io.emit('errorDetected', {
-              deviceId: device.deviceId,
-              errors: prediction,
-          });
-      }
+
+            if (io) {
+              console.log('Emitted errorDetected:', `Prediction for Device ${device.deviceId}:`, prediction );
+            io.emit('errorDetected', 
+              {message: `Device ${device.deviceId}: ${prediction}` },
+            );
+            io.emit('errorDetected', {message: `Device ${device.deviceId}:`, prediction});
+           
+            }
+            else {console.warn('Socket instance not available.');}
         
-       }}
+          }}
+          
     } catch (error) {
       console.error('Error during polling:', error); // Handle errors during polling
     }
