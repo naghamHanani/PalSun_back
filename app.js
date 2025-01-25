@@ -13,6 +13,7 @@ const { fetchDeviceData }= require('./Routes/deviceData');
 const smaroute=require('./Routes/SMAauth')
 const  {router: weatherroute }=require('./Routes/weather')
 const userroute=require('./Routes/login')
+const smadataroute=require('./Routes/sma_data')
 
 const app=express();
 app.use(cors());
@@ -59,7 +60,9 @@ app.use('/loginTest', userroute)
 
 app.use('/weather',weatherroute )
 
-app.use('/sma',smaroute);
+app.use('/smaAuth',smaroute);
+
+app.use('/smaData',smadataroute);
 
 
 pollData();
