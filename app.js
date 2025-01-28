@@ -23,7 +23,7 @@ const {check}=require("express-validator")
 app.use(bodyparser.json())
 app.use(bodyparser.urlencoded({extended:true}))
 
-
+const pop=require("./Routes/fill_plants")
 
 
 //server
@@ -62,10 +62,11 @@ app.use('/weather',weatherroute )
 
 app.use('/smaAuth',smaroute);
 
-app.use('/smaData',smadataroute);
+//app.use('/smaData',smadataroute);
 
+pop.populatePlantData();
 
-pollData();
+//pollData();
 
 //fetchDeviceData();
 
