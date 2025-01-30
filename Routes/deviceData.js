@@ -22,7 +22,7 @@ function setSocketInstance(socketInstance) {
 //  fetch device data from MySQL
 async function fetchDeviceData() {
   return new Promise((resolve, reject) => {
-    const query = 'SELECT * FROM devices WHERE isActive = 0'; // Query for active devices
+    const query = 'SELECT * FROM devices WHERE isActive = 1'; // Query for active devices
     mydb.query(query, (error, results) => {
       if (error) {
         return reject(error); // Handle query errors

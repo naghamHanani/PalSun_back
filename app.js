@@ -14,7 +14,7 @@ const smaroute=require('./Routes/SMAauth')
 const  {router: weatherroute }=require('./Routes/weather')
 const userroute=require('./Routes/login')
 const smadataroute=require('./Routes/sma_data')
-
+const reportsroute=require('./Routes/get_reports_values')
 const app=express();
 app.use(cors());
 const http = require('http');
@@ -23,7 +23,7 @@ const {check}=require("express-validator")
 app.use(bodyparser.json())
 app.use(bodyparser.urlencoded({extended:true}))
 
-const pop=require("./Routes/fill_plants")
+const pop=require("./Routes/fill_device")
 
 
 //server
@@ -44,7 +44,10 @@ server.listen(3000, () => {
 // });
 // const io = setupWebSocket(server);
 
+const cardsData = require('./Routes/get _cards_data'); // Import calculation logic
 
+// Pass io to the PV calculation module
+//cardsData(io);
 
 app.get('/',(req,res,next)=>{
     res.send("hello")
@@ -62,9 +65,10 @@ app.use('/weather',weatherroute )
 
 app.use('/smaAuth',smaroute);
 
+app.use('/pv-data/:type',reportsroute);
 //app.use('/smaData',smadataroute);
 
-pop.populatePlantData();
+//pop.populateDeviceData();
 
 //pollData();
 
