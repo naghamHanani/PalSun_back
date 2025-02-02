@@ -1,30 +1,30 @@
 const mydb = require('../Config/DBconnection'); // Database connection
 const { faker } = require('@faker-js/faker'); // A library to generate random data
 
-async function generateUniqueDeviceId() {
-    let deviceId;
-    let isUnique = false;
+// async function generateUniqueDeviceId() {
+//     let deviceId;
+//     let isUnique = false;
     
-    while (!isUnique) {
-        deviceId = faker.number.int({ min: 100000, max: 999999 }); // Generate random deviceId
+//     while (!isUnique) {
+//         deviceId = faker.number.int({ min: 100000, max: 999999 }); // Generate random deviceId
         
-        // Check if deviceId already exists in the database
-        const query = 'SELECT COUNT(*) AS count FROM devices WHERE deviceId = ?';
-        const result = await new Promise((resolve, reject) => {
-            mydb.query(query, [deviceId], (err, result) => {
-                if (err) reject(err);
-                resolve(result);
-            });
-        });
+//         // Check if deviceId already exists in the database
+//         const query = 'SELECT COUNT(*) AS count FROM devices WHERE deviceId = ?';
+//         const result = await new Promise((resolve, reject) => {
+//             mydb.query(query, [deviceId], (err, result) => {
+//                 if (err) reject(err);
+//                 resolve(result);
+//             });
+//         });
 
-        // If count is 0, it means the deviceId is unique
-        if (result[0].count === 0) {
-            isUnique = true;
-        }
-    }
+//         // If count is 0, it means the deviceId is unique
+//         if (result[0].count === 0) {
+//             isUnique = true;
+//         }
+//     }
     
-    return deviceId;
-}
+//     return deviceId;
+// }
 
 
 // Function to insert random data into `devices` table
@@ -60,7 +60,7 @@ async function insertDeviceData(numberOfRecords) {
             'Battery Inverter',
             'Hybrid Inverter',
             'Central Inverter',
-            'String Inverter'
+            'Basic Inverter'
         ];
 
         const now = new Date();
@@ -68,11 +68,13 @@ async function insertDeviceData(numberOfRecords) {
         // Generate records
         const data = [];
         for (let i = 0; i < numberOfRecords; i++) {
-            const usedDeviceIds = new Set(); // Track used device IDs
+           // const usedDeviceIds = new Set(); // Track used device IDs
 
-            const deviceId = await generateUniqueDeviceId(); // Unique deviceId
+            const possibleDeviceIds = [123456, 234567, 345678]; // Three predefined values
+            const deviceId = possibleDeviceIds[Math.floor(Math.random() * possibleDeviceIds.length)];
+            // const deviceId = await generateUniqueDeviceId(); // Unique deviceId
             
-            usedDeviceIds.add(deviceId); // Store the generated ID
+            //usedDeviceIds.add(deviceId); // Store the generated ID
 
             const product = productList[Math.floor(Math.random() * productList.length)]; // Select a product from the SMA product list
             const type = typeList[Math.floor(Math.random() * typeList.length)]; // Select a type from the SMA type list
@@ -136,8 +138,8 @@ async function insertDeviceData(numberOfRecords) {
             });
 
             // Modify the setDataTime to span from February of last year to January of this year
-            const startOfLastYear = new Date(now.getFullYear() - 1, 1, 1); // February 1st of last year
-            const endOfJanuaryThisYear = new Date(now.getFullYear(), 0, 31); // January 31st of this year
+            const startOfLastYear = new Date(now.getFullYear()-1  , 12, 30); // February 1st of last year
+            const endOfJanuaryThisYear = new Date(now.getFullYear(),2, 1); // January 31st of this year
 
             const setDataTime = new Date(faker.date.between({ from: startOfLastYear, to: endOfJanuaryThisYear }));
 setDataTime.setHours(faker.number.int({ min: 0, max: 23 })); // Assign a random hour each day
@@ -245,7 +247,8 @@ setDataTime.setSeconds(faker.number.int({ min: 0, max: 59 })); // Assign a rando
 // Function to populate data for the `devices` table
 async function populateDeviceData() {
     try {
-        const numberOfRecords = 100; // Number of records to insert
+
+        const numberOfRecords = 150; // Number of records to insert
         const results = await insertDeviceData(numberOfRecords); // Insert data for devices
         console.log(`Inserted ${results.affectedRows} records into the devices table.`);
     } catch (error) {

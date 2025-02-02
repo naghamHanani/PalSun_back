@@ -25,6 +25,12 @@ app.use(bodyparser.urlencoded({extended:true}))
 
 const pop=require("./Routes/fill_device")
 
+const plants= require('./Routes/plants')
+const devices=require('./Routes/devices')
+const users=require('./Routes/users')
+
+const reportCards=require('./Routes/get_report_cards')
+
 
 //server
 
@@ -47,7 +53,7 @@ server.listen(3000, () => {
 const cardsData = require('./Routes/get _cards_data'); // Import calculation logic
 
 // Pass io to the PV calculation module
-//cardsData(io);
+cardsData(io);
 
 app.get('/',(req,res,next)=>{
     res.send("hello")
@@ -66,6 +72,8 @@ app.use('/weather',weatherroute )
 app.use('/smaAuth',smaroute);
 
 app.use('/pv-data/:type',reportsroute);
+
+app.use('/reportCards', reportCards);
 //app.use('/smaData',smadataroute);
 
 //pop.populateDeviceData();
@@ -73,6 +81,11 @@ app.use('/pv-data/:type',reportsroute);
 //pollData();
 
 //fetchDeviceData();
+
+app.use('/getplant', plants);
+app.use('/getuserdata', users);
+app.use('/getdevicedata', devices);
+
 
 //login
 app.post('/login', (req, res) => {

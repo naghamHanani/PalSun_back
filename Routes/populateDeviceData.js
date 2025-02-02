@@ -5,11 +5,11 @@ const { faker } = require( '@faker-js/faker'); // A library to generate random d
 async function insertDeviceData(deviceId, numberOfRecords) {
     return new Promise((resolve, reject) => {
         const query = `
-            INSERT INTO device_power_data (deviceId, recordedAt, generatorPower, weatherCondition)
+            INSERT INTO device_power_data (deviceId, recordedAt, generatorPower)
             VALUES ?
         `;
 
-        const weatherConditions = ['sunny', 'cloudy', 'rainy', 'stormy'];
+       // const weatherConditions = ['sunny', 'cloudy', 'rainy', 'stormy'];
         const now = new Date();
 
         // Generate records
@@ -17,8 +17,7 @@ async function insertDeviceData(deviceId, numberOfRecords) {
         for (let i = 0; i < numberOfRecords; i++) {
             const recordedAt = new Date(now.getTime() - i * 3600000); // Gradually older timestamps (1 hour apart)
             const generatorPower = faker.number.float({ min: 20, max: 30 }) // Random power generation value
-            const weatherCondition =
-                weatherConditions[Math.floor(Math.random() * weatherConditions.length)];
+           
             data.push([deviceId, recordedAt, generatorPower, weatherCondition]);
         }
 

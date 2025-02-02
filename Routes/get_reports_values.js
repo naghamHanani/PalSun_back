@@ -10,16 +10,16 @@ const getDateRange = (type) => {
 
   switch (type) {
     case "daily":
-      startDate = new Date(now.setHours(0, 0, 0, 0)- 24); // Midnight today
+      startDate = new Date(now.setHours(0, 0, 0, 0)); // Midnight today
       break;
     case "weekly":
-      startDate = new Date(now.setDate(now.getDate() - 14)); // Last 7 days
+      startDate = new Date(now.setDate(now.getDate() - 7)); // Last 7 days
       break;
     case "monthly":
-      startDate = new Date(now.setMonth(now.getMonth() - 2)); // Last 30 days
+      startDate = new Date(now.setMonth(now.getMonth() - 1)); // Last 30 days
       break;
     case "yearly":
-      startDate = new Date(now.setFullYear(now.getFullYear() - 3)); // Last year
+      startDate = new Date(now.setFullYear(now.getFullYear() - 1)); // Last year
       break;
     default:
       startDate = new Date(now.setHours(0, 0, 0, 0));

@@ -15,7 +15,7 @@ router.get('/', async (req, res) => {
   const redirectURI = 'http://localhost:3000/callback';
   //const state = 'randomOpaqueValue'; // Generate a unique value here.
   const crypto = require('crypto');
-const state = crypto.randomBytes(16).toString('hex');
+  const state = crypto.randomBytes(16).toString('hex');
 
   // Construct the query parameters
   const params = querystring.stringify({
