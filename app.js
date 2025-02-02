@@ -23,7 +23,7 @@ const {check}=require("express-validator")
 app.use(bodyparser.json())
 app.use(bodyparser.urlencoded({extended:true}))
 
-const pop=require("./Routes/fill_device")
+const pop=require("./Routes/fill_plants")
 
 const plants= require('./Routes/plants')
 const devices=require('./Routes/devices')
@@ -53,7 +53,7 @@ server.listen(3000, () => {
 const cardsData = require('./Routes/get _cards_data'); // Import calculation logic
 
 // Pass io to the PV calculation module
-cardsData(io);
+//cardsData(io);
 
 app.get('/',(req,res,next)=>{
     res.send("hello")
@@ -76,7 +76,7 @@ app.use('/pv-data/:type',reportsroute);
 app.use('/reportCards', reportCards);
 //app.use('/smaData',smadataroute);
 
-//pop.populateDeviceData();
+pop.populatePlantData();
 
 //pollData();
 
